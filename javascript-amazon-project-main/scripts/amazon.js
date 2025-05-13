@@ -1,6 +1,11 @@
 import { products, product1 } from "../data/products.js";
-import { cart, add2Cart } from "../data/cart.js";
+import { cart, add2Cart, save2Storage } from "../data/cart.js";
 
+renderCartQuantity();
+//make the cart quantity in the header dynamic
+function renderCartQuantity(){
+  document.querySelector('.js-cart-quantity').innerHTML = cart.length
+}
 
 
 //generate html for each product
@@ -64,10 +69,10 @@ document.querySelector('.js-homepage-mother').innerHTML = html;
 document.querySelectorAll('.js-add-to-cart').forEach((buttonElement) => {
   buttonElement.addEventListener('click', () => {
     const productId = buttonElement.dataset.productId;
-    const selectedQuantity = document.querySelector(`.js-select[data-product-id="${productId}"]`).value
-    console.log(productId);
-    console.log(selectedQuantity)
-    add2Cart(productId, selectedQuantity)
+    const selectedQuantity = document.querySelector(`.js-select[data-product-id="${productId}"]`).value;
+    add2Cart(productId, selectedQuantity);
+    save2Storage();
+    renderCartQuantity();
   })
 });
 

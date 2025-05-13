@@ -10,7 +10,10 @@ class Cart{
   }
 }
 
-export const cart = [
+export const cart = JSON.parse(localStorage.getItem('cart'));
+
+if (!cart){
+  cart = [
 {
   id: "5968897c-4d27-4872-89f6-5bcb052746d7",
   quantity: 2
@@ -23,6 +26,8 @@ export const cart = [
 ].map((cartItem) => {
   return new Cart(cartItem)
 })
+}
+
 
 export function add2Cart(productId, selectedQuantity){
   let matchingItem;
@@ -44,4 +49,8 @@ export function add2Cart(productId, selectedQuantity){
   }
   console.log(cart)
   
+}
+
+export function save2Storage(){
+  localStorage.setItem('cart', JSON.stringify(cart))
 }
