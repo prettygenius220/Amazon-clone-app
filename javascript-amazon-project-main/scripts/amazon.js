@@ -30,7 +30,7 @@ function renderHTML(){
           </div>
 
           <div class="product-quantity-container">
-            <select>
+            <select class="js-select" data-product-Id="${product.id}">
               <option selected value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -64,8 +64,10 @@ document.querySelector('.js-homepage-mother').innerHTML = html;
 document.querySelectorAll('.js-add-to-cart').forEach((buttonElement) => {
   buttonElement.addEventListener('click', () => {
     const productId = buttonElement.dataset.productId;
+    const selectedQuantity = document.querySelector(`.js-select[data-product-id="${productId}"]`).value
     console.log(productId);
-    add2Cart(productId)
+    console.log(selectedQuantity)
+    add2Cart(productId, selectedQuantity)
   })
 });
 
