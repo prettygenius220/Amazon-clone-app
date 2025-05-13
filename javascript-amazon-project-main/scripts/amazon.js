@@ -1,10 +1,11 @@
 import { products, product1 } from "../data/products.js";
+import { cart, add2Cart } from "../data/cart.js";
 
 
 
 //generate html for each product
 function renderHTML(){
-  let html;
+  let html = '';
   products.forEach((product) => {
     html += `<div class="product-container">
           <div class="product-image-container">
@@ -20,12 +21,12 @@ function renderHTML(){
             <img class="product-rating-stars"
               src="images/ratings/rating-${product.rating.stars * 10}.png">
             <div class="product-rating-count link-primary">
-              87
+              ${product.rating.count}
             </div>
           </div>
 
           <div class="product-price">
-            $${product.cents2Dollars}
+            $${product.cents2Dollars()}
           </div>
 
           <div class="product-quantity-container">
@@ -43,6 +44,8 @@ function renderHTML(){
             </select>
           </div>
 
+          <div class="js-link">${product.renderClothingLink()}</div>
+
           <div class="product-spacer"></div>
 
           <div class="added-to-cart">
@@ -50,12 +53,25 @@ function renderHTML(){
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary">
+          <button class="add-to-cart-button button-primary js-add-to-cart" data-product-id="${product.id}">
             Add to Cart
           </button>
         </div>`
 })
+
+document.querySelector('.js-homepage-mother').innerHTML = html;
+
+document.querySelectorAll('.js-add-to-cart').forEach((buttonElement) => {
+  buttonElement.addEventListener('click', () => {
+    const productId = buttonElement.dataset.productId;
+    console.log(productId);
+    add2Cart(productId)
+  })
+});
+
 };
+
+
 
 renderHTML();
 

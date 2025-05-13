@@ -18,7 +18,7 @@ class Product{
   }
 
   cents2Dollars(){
-    (this.priceCents / 100).toFixed(2)
+    return (this.priceCents / 100).toFixed(2)
   }
 };
 
@@ -31,7 +31,7 @@ class Clothing extends Product{
   }
   
   renderClothingLink(){
-    return `<a href="${this.sizeChartLink}" target="_blank">`
+    return `<a href="${this.sizeChartLink}" target="_blank">Show Guide</a>`
   }
 
 }
