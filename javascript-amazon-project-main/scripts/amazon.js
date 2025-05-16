@@ -1,10 +1,38 @@
-import { products, product1 } from "../data/products.js";
+import { products } from "../data/products.js";
 import { cart, add2Cart, save2Storage } from "../data/cart.js";
+
 
 renderCartQuantity();
 //make the cart quantity in the header dynamic
+
 function renderCartQuantity(){
   document.querySelector('.js-cart-quantity').innerHTML = cart.length
+}
+
+const timeoutIds = {}; // Object to store timeout IDs for each product
+
+function renderAdded(productId) {
+  // Find all elements with the class `.js-added`
+  document.querySelectorAll('.js-added').forEach((element) => {
+    const elementProductId = element.dataset.productId;
+
+    // Check if the current element matches the given productId
+    if (elementProductId === productId) {
+      // Make the element visible
+      element.classList.add('visible');
+
+      // Clear any existing timeout for this product
+      if (timeoutIds[productId]) {
+        clearTimeout(timeoutIds[productId]);
+      }
+
+      // Set a new timeout for this product
+      timeoutIds[productId] = setTimeout(() => {
+        element.classList.remove('visible'); // Hide the element
+        delete timeoutIds[productId]; // Clean up the timeout ID
+      }, 2000);
+    }
+  });
 }
 
 
@@ -53,7 +81,7 @@ function renderHTML(){
 
           <div class="product-spacer"></div>
 
-          <div class="added-to-cart">
+          <div class="added-to-cart js-added" data-product-id="${product.id}">
             <img src="images/icons/checkmark.png">
             Added
           </div>
@@ -72,11 +100,13 @@ document.querySelectorAll('.js-add-to-cart').forEach((buttonElement) => {
     const selectedQuantity = document.querySelector(`.js-select[data-product-id="${productId}"]`).value;
     add2Cart(productId, selectedQuantity);
     save2Storage();
-    renderCartQuantity();
+    document.querySelector('.js-cart-quantity').innerHTML = `${cart.length}`;
+    renderAdded(productId);
   })
 });
 
 };
+
 
 
 
