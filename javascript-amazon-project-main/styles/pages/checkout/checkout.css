@@ -209,3 +209,24 @@
   margin-top: 11px;
   margin-bottom: 15px;
 }
+
+.quantity-input{
+  width: 0;
+  opacity: 0;
+}
+
+.quantity-input-visible{
+  border: 0.5px solid rgb(120, 120, 120) ;
+  border-radius: 8px ;
+  width: auto;
+  padding: 8px;
+  opacity: 1;
+}
+
+.js-save{
+  opacity: 0;
+}
+
+.js-save-visible{
+  opacity: 1;
+}

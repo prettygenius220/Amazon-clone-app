@@ -1,6 +1,8 @@
 import { products } from "./products.js";
 import { deliveryOptions } from "./deliveryOption.js";
-import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js'
+import { renderOrderSummary } from "../scripts/orderSummary.js";
+
+import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 
 
 
@@ -39,7 +41,9 @@ if (!cart){
 export function getDateTime(){
   const today = dayjs();
   return today;
-}
+};
+
+
 
 export function add2Cart(productId, selectedQuantity){
   let matchingItem;
@@ -71,6 +75,58 @@ export function makeLinkInteractive(){
   document.querySelector('.js-summary-row').innerHTML = `Items (${cart.length})`
 };
 
+function updateCartQuantity2() {
+  document.querySelectorAll('.js-save').forEach((element) => {
+    const productId = element.dataset.productId;
+
+    element.addEventListener('click', () => {
+      const inputElement = document.querySelector(`.quantity-input[data-product-id="${productId}"]`);
+      if (!inputElement) {
+        console.error(`Input element not found for product ID: ${productId}`);
+        return;
+      }
+
+      const selectedQuantity = inputElement.value;
+      const selected = Number(selectedQuantity);
+
+      add2Cart(productId, selected);
+      save2Storage();
+      renderCartItems(); // Re-render the cart to reflect the updated quantity
+      renderOrderSummary();
+    });
+  });
+}
+
+
+function updateCart(productId){
+  document.querySelectorAll('.quantity-input').forEach((element) => {
+    const elementId = element.dataset.productId;
+
+    if(elementId === productId){
+      const saveElement = document.querySelector(`.js-save[data-product-id="${productId}"]`);
+      saveElement.classList.add('js-save-visible');
+
+      const inputElement = document.querySelector(`.quantity-input[data-product-id="${productId}"]`);
+
+      inputElement.classList.add('quantity-input-visible');
+
+    }
+  })
+};
+
+function closeUpdate(productId){
+  document.querySelectorAll('.quantity-input').forEach((element) => {
+    const elementId = element.dataset.productId;
+
+    if(elementId === productId){
+      document.querySelector(`.js-save[data-product-id="${productId}"]`).classList.remove('js-save-visible');
+
+      document.querySelector(`.quantity-input[data-product-id="${productId}"]`).classList.remove('quantity-input-visible')
+    }
+  })
+}
+
+
 export function renderCartItems(){
   let html = '';
   let matchingProduct;
@@ -97,13 +153,18 @@ export function renderCartItems(){
                 <div class="product-price">
                   $${matchingProduct.cents2Dollars()}
                 </div>
-                <div class="product-quantity">
+                <div class="product-quantity ">
                   <span>
                     Quantity: <span class="quantity-label">${cartItem.quantity}</span>
                   </span>
-                  <span class="update-quantity-link link-primary">
+                  <span class="update-quantity-link link-primary js-update"
+                  data-product-id=${matchingProduct.id}>
                     Update
                   </span>
+                  <input class="quantity-input" type="number"
+                  data-product-id=${matchingProduct.id}>
+                  <span class="save-quantity-link link-primary js-save"
+                  data-product-id=${matchingProduct.id}>Save</span>
                   <span class="delete-quantity-link link-primary js-delete" data-cart-id=${cartItem.id}
                   data-product-id=${matchingProduct.id}>
                     Delete
@@ -120,15 +181,37 @@ export function renderCartItems(){
         </div>
           
         `;
+        
       };
       
     })
     document.querySelector('.js-order-summary').innerHTML = html;   
-    getElement();
+    
+    
     
   });
+  getElement();
   setUpDeliveryInputListener();
-  remove4rmCart()
+  remove4rmCart();
+  updateCartQuantity2(matchingProduct.id);
+  
+
+
+  //update 
+  document.querySelectorAll('.js-update').forEach((updateLink) => {
+    updateLink.addEventListener('click', () => {
+      const productId = updateLink.dataset.productId;
+      if(updateLink.classList.contains('active')){
+        updateLink.classList.remove('active');
+        closeUpdate(productId)
+      } else{
+        updateLink.classList.add('active')
+        updateCart(productId)
+      }
+      
+    })
+  });
+  
 }
 
 export function renderDeliveryDate(productId, cartdeliveryId, cartId){
@@ -209,10 +292,10 @@ function setUpDeliveryInputListener() {
 
       // Update the delivery date display
       getElement();
-
+      renderOrderSummary();
       
-      console.log(selectedDeliveryOptionId);
-      console.log(cartItem);
+      //console.log(selectedDeliveryOptionId);
+      //console.log(cartItem);
     });
   });
 };
@@ -230,6 +313,7 @@ function remove4rmCart(){
       cart = newCart;
       save2Storage();
       renderCartItems();
+      renderOrderSummary();
     })
   })
 }
