@@ -77,6 +77,7 @@ export function renderOrderSummary(){
 export function toOrderPage(){
   document.querySelector('.js-order-button').addEventListener('click', () => {
     sendOrderRequest().then(() => {
+      alert("Order placed successfully.")
       const cartIds = cart.map((item) => item.id);
       const queryString = `?ids=${cartIds.join(',')}`;
       window.location.href = `orders.html${queryString}`
