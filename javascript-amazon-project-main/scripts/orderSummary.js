@@ -76,8 +76,28 @@ export function renderOrderSummary(){
 
 export function toOrderPage(){
   document.querySelector('.js-order-button').addEventListener('click', () => {
-    const cartIds = cart.map((item) => item.id);
-    const queryString = `?ids=${cartIds.join(',')}`;
-    window.location.href = `orders.html${queryString}`
+    sendOrderRequest().then(() => {
+      const cartIds = cart.map((item) => item.id);
+      const queryString = `?ids=${cartIds.join(',')}`;
+      window.location.href = `orders.html${queryString}`
+      })    
   })
+}
+
+async function sendOrderRequest(){
+  const cartIds = cart.map((item) => item.id).join(',');
+  const webhookUrl = `https://hook.us1.make.com/m09k6cpu6zrwsx9tnhoi7165xvv6tvwh?ids=${cartIds}`;
+  try {
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({cart: cart})
+    });
+
+    return order;
+  }
+
+  catch(error){
+   console.log('Try again later')
+  }
 }

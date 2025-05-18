@@ -1,10 +1,15 @@
 import { cart } from "../data/cart.js";
 import { products } from "../data/products.js";
-import { orderTotal } from "./orderSummary.js";
 import { deliveryOptions } from "../data/deliveryOption.js";
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
-renderorderItems();
 
+renderorderItems();
+renderCartQuantity();
+
+
+function renderCartQuantity(){
+  document.querySelector('.js-cart-quantity').innerHTML = cart.length
+}
 
 function getOrders(){
   const queryString = window.location.search;
@@ -31,6 +36,7 @@ function renderorderItems() {
       if (matchingProduct) {
         // Generate the HTML for the order item
         orderDetailsHTML += `
+        <div class="order-container">
         <div class="order-header">
             <div class="order-header-left-section">
               <div class="order-date">
@@ -78,16 +84,15 @@ function renderorderItems() {
               </a>
             </div>
           </div>
+        </div>
         `;
       }
     }
   });
 
   // Update the DOM with the generated HTML
-  const orderDetailsContainer = document.querySelector('.js-container');
+  const orderDetailsContainer = document.querySelector('.js-order-container');
   if (orderDetailsContainer) {
     orderDetailsContainer.innerHTML = orderDetailsHTML;
-  }
-
-  console.log(orderDetailsHTML); // Debugging
+  } // Debugging
 }
